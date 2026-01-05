@@ -53,6 +53,8 @@ class Graph {
     private List<List<Integer>> g;
     private int[] colours;
     private boolean isBp;
+    private Boolean[] visited;
+    private boolean hasCycle;
 
     public static final int WHITE = 0;
     public static final int RED = 1;
@@ -98,7 +100,8 @@ class Graph {
             }
         }
     }
-    
+
+
     public boolean checkBipartite(int start, int startColour, int n) { 
         colours = new int[n];
         Arrays.fill(colours, WHITE);
@@ -106,7 +109,7 @@ class Graph {
         return isBp;
     }
 
-    public void bipartiteDFS(int curr, int colour) {
+    private void bipartiteDFS(int curr, int colour) {
 
         if (colours[curr - 1] != WHITE) {
             if (colours[curr - 1] != colour) {
@@ -125,6 +128,24 @@ class Graph {
             }
         }
     }
+    
+    public boolean checkCycle(int start, int n) {  
+        visited = new Boolean[n];
+        Arrays.fill(visited, false);
+        cycleDFS(start, -1);
+        return hasCycle;
+    }
+    
+    private void cycleDFS(int curr, int prev) {
+        visited[curr - 1] = true;
+        
+        for (int v : g.get(curr - 1)) {
+            if (v != prev && visited[v] == true) {
+                this.hasCycle = true;
+            }
+            cycleDFS(v, curr);
+        }
+    } 
 }
 
 
@@ -155,5 +176,7 @@ class GraphMain {
 
         System.out.println(g.checkBipartite(1, Graph.BLUE, 5)); 
         System.out.println(g2.checkBipartite(1, Graph.BLUE, 4)); 
+        
+        System.out.println(g.checkCycle(1, 5));
     }
 }
