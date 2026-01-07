@@ -129,14 +129,14 @@ class Graph {
         }
     }
     
-    public boolean checkCycle(int start, int n) {  
+    public boolean checkCycleU(int start, int n) {  
         visited = new Boolean[n];
         Arrays.fill(visited, false);
-        cycleDFS(start, -1);
+        cycleDFSU(start, -1);
         return this.hasCycle;
     }
     
-    private void cycleDFS(int curr, int prev) {
+    private void cycleDFSU(int curr, int prev) {
         visited[curr - 1] = true;
         
         for (int v : g.get(curr - 1)) {
@@ -144,12 +144,24 @@ class Graph {
                 this.hasCycle = true;
                 return;
             } else if (visited[v - 1] == false) {
-                cycleDFS(v, curr);
+                cycleDFSU(v, curr);
             } else {
                 continue;
             }
         }
     } 
+    
+    public boolean checkCycleD(int start, int n) {
+        visiting = new Boolean(n);
+        Arrays.fill(visiting, false);
+        cycleDFSU(start, -1);
+        return this.hasCycle;
+    }
+    
+    private void cycleDFSD(int curr, int prev) {
+        visiting[curr - 1] = true;
+        
+        for (int v : g.get
 }
 
 
@@ -192,8 +204,8 @@ class GraphMain {
         
         System.out.println("------");
         
-        System.out.println(g.checkCycle(1, 5));
-        System.out.println(g2.checkCycle(1, 4));
-        System.out.println(g3.checkCycle(1, 5));
+        System.out.println(g.checkCycleU(1, 5));
+        System.out.println(g2.checkCycleU(1, 4));
+        System.out.println(g3.checkCycleU(1, 5));
     }
 }
