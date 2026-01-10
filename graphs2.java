@@ -1,11 +1,17 @@
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.PriorityQueue;
 
 class Edge {
     public int destNode;
+    public int src;
     public int weight;
 
-    public Edge(int d, int w)
+    public Edge(int d, int s, int w)
     {
         this.destNode = d;
+        this.src = s;
         this.weight = w;
     }
 }
@@ -13,50 +19,54 @@ class Edge {
 class WeightedGraph {
     private List<List<Edge>> g;
     private ArrayList<Integer> inMst;
-    private ArrayList<Integer> notInMst;
     private static final int NO_PARENT = -1;
+    private PriorityQueue<Edge> minHeap;
     
     public int[] parent;
     
-    public WeightedGraph(List<List<List<Integer>>> g) {
+    public WeightedGraph(List<List<Edge>> g) {
         this.g = g;
         this.inMst = new ArrayList<>();
-        this.notInMst = new ArrayList<>();
-
-        for(int i = 0 ; i < this.g.size(); i++)
-        {
-            this.notInMst.add(i);
-        }
+        this.minHeap = new PriorityQueue<Edge>((a, b) -> Integer.compare(a.weight, b.weight));
     }
     
-    public int[] primMST(int n) {
+    public int[] primMST(int start, int n) {
         parent = new int[n];
         Arrays.fill(parent, NO_PARENT);
-        primMSThelper();
+        primMSThelper(start, n);
         return this.parent;
     }
     
-    private void primMSThelper() {
+    private void primMSThelper(int start, int n) {
 
-        while(notInMst.size() > 0)
+        inMst.add(start);
+        List<Edge> vertexAdjacencyList = this.g.get(start-1); 
+
+        for(Edge e : vertexAdjacencyList)
         {
-            int curr = notInMst.get(0);
-            List<Edge> vertexAdjacencyList = this.g.get(curr); 
-
-            PriorityQueue<Edge> minHeap = new PriorityQueue<>((a, b) -> Integer.compare(a.weight, b.weight));
-
-            for(Edge e : vertexAdjacencyList)
+            this.minHeap.add(e);            
+        } 
+ 
+        while(inMst.size() < n)
+        {
+            Edge min = minHeap.poll();
+            System.out.println("Source: " + Integer.toString(min.src) + " Destination: " + Integer.toString(min.destNode));
+            
+            while(inMst.contains(min.src))
             {
-                minHeap.add(e);            
+                min = minHeap.poll();
+            }     
+
+            parent[min.destNode - 1] = min.src;
+
+            inMst.add(min.destNode);
+
+            List<Edge> vertexAdjacencyList2 = this.g.get(min.destNode -1); 
+
+            for(Edge e : vertexAdjacencyList2)
+            {
+                this.minHeap.add(e);            
             } 
-
-            Edge min = minHeap.get();
-
-            parent[min.destNode - 1] = curr;
-
-            inMst.add(min.destNode - 1);
-
-            notInMst.remove(0);
         }
     }
 }
@@ -65,39 +75,37 @@ class WeightMain
 {
     public static void main(String[] args)
     {
+        Edge e1_2 = new Edge(2,1,3);
+        Edge e1_4 = new Edge(4,1,4);
+        Edge e2_1 = new Edge(1,2,3);
+        Edge e2_3 = new Edge(3,2,3);
+        Edge e2_4 = new Edge(4,2,4);
 
-        Edge 1_2 = new Edge(2,3);
-        Edge 1_4 = new Edge(4,4);
-`
-        Edge 2_1 = new Edge(1,3);
-        Edge 2_3 = new Edge(3,3);
-        Edge 2_4 = new Edge(4,4);
+        Edge e3_2 = new Edge(2,3,3);
+        Edge e3_4 = new Edge(4,3,2);
+        Edge e3_5 = new Edge(5,3,4);
 
-        Edge 3_2 = new Edge(2,3);
-        Edge 3_4 = new Edge(4,2);
-        Edge 3_5 = new Edge(5,4);
+        Edge e4_1 = new Edge(1,4,4);
+        Edge e4_2 = new Edge(2,4,4);
+        Edge e4_3 = new Edge(3,4,2);
+        Edge e4_5 = new Edge(5,4,5);
+        Edge e4_6 = new Edge(6,4,3);
 
-        Edge 4_1 = new Edge(1,4);
-        Edge 4_2 = new Edge(2,4);
-        Edge 4_3 = new Edge(3,2);
-        Edge 4_5 = new Edge(5,5);
-        Edge 4_6 = new Edge(6,3);
+        Edge e5_3 = new Edge(3,5,4);
+        Edge e5_4 = new Edge(4,5,5);
+        Edge e5_6 = new Edge(6,5,4);
 
-        Edge 5_3 = new Edge(3,4);
-        Edge 5_4 = new Edge(4,5);
-        Edge 5_6 = new Edge(6,4);
+        Edge e6_4 = new Edge(4,6,3);
+        Edge e6_5 = new Edge(5,6,4);
 
-        Edge 6_4 = new Edge(4,3);
-        Edge 6_5 = new Edge(5,4);
+        List<Edge> al1 = new ArrayList<>(List.of(e1_2, e1_4));
+        List<Edge> al2 = new ArrayList<>(List.of(e2_1, e2_3, e2_4));
+        List<Edge> al3 = new ArrayList<>(List.of(e3_2, e3_4, e3_5));
+        List<Edge> al4 = new ArrayList<>(List.of(e4_1, e4_2, e4_3, e4_5, e4_6));
+        List<Edge> al5 = new ArrayList<>(List.of(e5_3, e5_4, e5_6));
+        List<Edge> al6 = new ArrayList<>(List.of(e6_4, e6_5));
 
-        List<Edge> al1 = new ArrayList<>(List.of(1_2, 1_4));
-        List<Edge> al2 = new ArrayList<>(List.of(2_1, 2_3, 2_4));
-        List<Edge> al3 = new ArrayList<>(List.of(3_2, 3_4, 3_5));
-        List<Edge> al4 = new ArrayList<>(List.of(4_1, 4_2, 4_3, 4_5, 4_6));
-        List<Edge> al5 = new ArrayList<>(List.of(5_3, 5_4, 5_6));
-        List<Edge> al6 = new ArrayList<>(List.of(6_4, 6_5));
-
-        List<List<Edge> gr = new ArrayList<>();
+        List<List<Edge>> gr = new ArrayList<>();
         gr.add(al1);
         gr.add(al2);
         gr.add(al3);
@@ -106,6 +114,11 @@ class WeightMain
         gr.add(al6);
 
         WeightedGraph g = new WeightedGraph(gr);
-        g.
+        g.primMST(1, 6);
+
+        for(int i = 0; i < g.parent.length; i++)
+        {
+            System.out.println(Integer.toString(i) + " " + Integer.toString(g.parent[i]));
+        }
     }
 }
