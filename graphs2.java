@@ -14,24 +14,31 @@ class Edge {
         this.src = s;
         this.weight = w;
     }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        Edge e = (Edge)o;
+        return ((this.src == e.src && this.destNode == e.destNode) || (this.src == e.destNode && this.destNode == e.src));
+    }
 }
 
 class WeightedGraph {
     private List<List<Edge>> g;
-    private ArrayList<Integer> inMst;
     private static final int NO_PARENT = -1;
     private PriorityQueue<Edge> minHeap;
-    
+    private boolean[] visited;
+ 
     public int[] parent;
     
     public WeightedGraph(List<List<Edge>> g) {
         this.g = g;
-        this.inMst = new ArrayList<>();
         this.minHeap = new PriorityQueue<Edge>((a, b) -> Integer.compare(a.weight, b.weight));
     }
     
     public int[] primMST(int start, int n) {
         parent = new int[n];
+        visited = new boolean[n];
         Arrays.fill(parent, NO_PARENT);
         primMSThelper(start, n);
         return this.parent;
@@ -39,33 +46,37 @@ class WeightedGraph {
     
     private void primMSThelper(int start, int n) {
 
-        inMst.add(start);
         List<Edge> vertexAdjacencyList = this.g.get(start-1); 
+        visited[start - 1] = true;
 
         for(Edge e : vertexAdjacencyList)
         {
             this.minHeap.add(e);            
         } 
- 
-        while(inMst.size() < n)
+
+        int count = 0;
+        while(count < n - 1 && !minHeap.isEmpty())
         {
             Edge min = minHeap.poll();
+            int destIndex = min.destNode - 1;
+        
+            if (visited[destIndex]) {
+                continue;
+            }
+            
+            count++;
             System.out.println("Source: " + Integer.toString(min.src) + " Destination: " + Integer.toString(min.destNode));
             
-            while(inMst.contains(min.src))
-            {
-                min = minHeap.poll();
-            }     
-
-            parent[min.destNode - 1] = min.src;
-
-            inMst.add(min.destNode);
+            visited[destIndex] = true;
+            parent[destIndex] = min.src;
 
             List<Edge> vertexAdjacencyList2 = this.g.get(min.destNode -1); 
 
             for(Edge e : vertexAdjacencyList2)
-            {
-                this.minHeap.add(e);            
+            { 
+                if (!visited[e.destNode - 1]) {
+                    this.minHeap.add(e);            
+                }
             } 
         }
     }
