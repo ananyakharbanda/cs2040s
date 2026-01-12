@@ -80,6 +80,12 @@ class WeightedGraph {
             } 
         }
     }
+    
+    private void kruskalMST() {
+        
+    }
+    
+    
 }
 
 class WeightMain
