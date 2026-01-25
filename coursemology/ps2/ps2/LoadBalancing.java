@@ -14,9 +14,34 @@ public class LoadBalancing {
      * @return true iff it is possible to assign the jobs to p processors so that no processor has more than queryLoad load.
      */
     public static boolean isFeasibleLoad(int[] jobSizes, int queryLoad, int p) {
-        // TODO: Implement this
-        return false;
+        if (jobSizes == null || jobSizes.length == 0 || p <= 0) {
+            return false;
+        }
+
+        int processorsUsed = 1;
+        int currentLoad = 0;
+
+        for (int i = 0; i < jobSizes.length; i++) {
+            int job = jobSizes[i];
+
+            if (job > queryLoad) {
+                return false;
+            }
+
+            if (currentLoad + job <= queryLoad) {
+                currentLoad += job;
+            } else {
+                processorsUsed++;
+                currentLoad = job;
+
+                if (processorsUsed > p) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
+
 
     /**
      * Returns the minimum achievable load given the specified jobs and number of processors.
@@ -26,9 +51,34 @@ public class LoadBalancing {
      * @return the maximum load for a job assignment that minimizes the maximum load
      */
     public static int findLoad(int[] jobSizes, int p) {
-        // TODO: Implement this
-        return 0;
+        if (jobSizes == null || jobSizes.length == 0 || p <= 0) {
+            return -1;
+        }
+
+        int maxJob = 0;
+        int totalSum = 0;
+
+        for (int job : jobSizes) {
+            maxJob = Math.max(maxJob, job);
+            totalSum += job;
+        }
+
+        int low = Math.max(maxJob, (int) Math.ceil((double) totalSum / p));
+        int high = totalSum;
+
+        while (low < high) {
+            int mid = low + (high - low) / 2;
+
+            if (isFeasibleLoad(jobSizes, mid, p)) {
+                high = mid;
+            } else {
+                low = mid + 1;
+            }
+        }
+
+        return low;
     }
+
 
     // These are some arbitrary testcases.
     public static int[][] testCases = {
