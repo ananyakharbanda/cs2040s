@@ -4,15 +4,17 @@ import org.junit.Test;
 
 /**
  * ShiftRegisterTest
- * @author dcsslg
+ * @author ananyakharbanda
+ * Description: set of tests for a shift register implementation
+ */
+/**
+ * ShiftRegisterTest
  * Description: set of tests for a shift register implementation
  */
 public class ShiftRegisterTest {
+
     /**
      * Returns a shift register to test.
-     * @param size
-     * @param tap
-     * @return a new shift register
      */
     ILFShiftRegister getRegister(int size, int tap) {
         return new ShiftRegister(size, tap);
@@ -24,10 +26,11 @@ public class ShiftRegisterTest {
     @Test
     public void testShift1() {
         ILFShiftRegister r = getRegister(9, 7);
-        int[] seed = { 0, 1, 0, 1, 1, 1, 1, 0, 1 };
+        int[] seed = {0, 1, 0, 1, 1, 1, 1, 0, 1};
         r.setSeed(seed);
-        int[] expected = { 1, 1, 0, 0, 0, 1, 1, 1, 1, 0 };
-        for (int i = 0; i < 10; i++) {
+
+        int[] expected = {1, 1, 0, 0, 0, 1, 1, 1, 1, 0};
+        for (int i = 0; i < expected.length; i++) {
             assertEquals(expected[i], r.shift());
         }
     }
@@ -38,10 +41,11 @@ public class ShiftRegisterTest {
     @Test
     public void testGenerate1() {
         ILFShiftRegister r = getRegister(9, 7);
-        int[] seed = { 0, 1, 0, 1, 1, 1, 1, 0, 1 };
+        int[] seed = {0, 1, 0, 1, 1, 1, 1, 0, 1};
         r.setSeed(seed);
-        int[] expected = { 6, 1, 7, 2, 2, 1, 6, 6, 2, 3 };
-        for (int i = 0; i < 10; i++) {
+
+        int[] expected = {6, 1, 7, 2, 2, 1, 6, 6, 2, 3};
+        for (int i = 0; i < expected.length; i++) {
             assertEquals("GenerateTest", expected[i], r.generate(3));
         }
     }
@@ -52,22 +56,24 @@ public class ShiftRegisterTest {
     @Test
     public void testOneLength() {
         ILFShiftRegister r = getRegister(1, 0);
-        int[] seed = { 1 };
+        int[] seed = {1};
         r.setSeed(seed);
-        int[] expected = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, };
+
         for (int i = 0; i < 10; i++) {
-            assertEquals(expected[i], r.generate(3));
+            assertEquals(0, r.generate(3));
         }
     }
 
     /**
      * Tests with erroneous seed.
+     * Test passes as long as no exception is thrown.
      */
     @Test
     public void testError() {
         ILFShiftRegister r = getRegister(4, 1);
-        int[] seed = { 1, 0, 0, 0, 1, 1, 0 };
+        int[] seed = {1, 0, 0, 0, 1, 1, 0};
         r.setSeed(seed);
+
         r.shift();
         r.generate(4);
     }
