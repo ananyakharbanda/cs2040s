@@ -49,9 +49,22 @@ public class SGTree {
      */
     public TreeNode[] enumerateNodes(TreeNode node) {
         int numNodes = countNodes(node);
-        int[] allNodes = new int[numNodes];
-        while (node != nul)
-        return new TreeNode[0];
+        TreeNode[] allNodes = new TreeNode[numNodes];
+        enumNodesHelper(node, allNodes, 0);
+
+        return allNodes;
+    }
+
+    private int enumNodesHelper(TreeNode node, TreeNode[] arr, int index) {
+        if (node == null) {
+            return index;
+        }
+        index = enumNodesHelper(node.left, arr, index);
+        arr[index] = node;
+        index++;
+
+        index = enumNodesHelper(node.right, arr, index);
+        return index;
     }
 
     /**
@@ -62,9 +75,21 @@ public class SGTree {
      * @return the new root node
      */
     public TreeNode buildTree(TreeNode[] nodeList) {
-        // TODO: Implement this
+        int n = nodeList.length;
+        
         return new TreeNode(0);
     }
+
+    public TreeNode buildTreeHelper(TreeNode[] nodeList, int low, int high) {
+        if (low > high) {
+            return null;
+        }
+
+        int mid = (low + high) / 2;
+        TreeNode root = arr[mid];
+        root.left = buildTreeHelper(nodeList, low, mid - 1);
+    }
+
 
     /**
      * Determines if a node is balanced. If the node is balanced, this should return true. Otherwise, it should return
