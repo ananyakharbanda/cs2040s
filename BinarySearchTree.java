@@ -67,6 +67,49 @@ class BinarySearchTree {
         return r;
     }
     
+    
+    public void betterDelete(int key) {
+        this.root = betterDeleteHelper(this.root, key);
+    }
+    
+    public Node betterDeleteHelper(Node r, int k) {
+        if (r == null) {
+            System.out.println("key not found!");
+            return r;
+        } 
+    
+        if (k < r.key) {
+            r.left = betterDeleteHelper(r.left, k);
+            return r;
+
+        } else if (k > r.key) {
+            r.right = betterDeleteHelper(r.right, k);
+            return r;
+
+        } else {
+            if (r.left == null && r.right == null) {
+                return null;
+            } else if (r.left == null) {
+                return r.right;
+            } else if (r.right == null) {
+                return r.left;
+            } else {
+                Node successor = findMin(r.right);
+                r.key = successor.key;
+                r.value = successor.value;
+                r.right = betterDeleteHelper(r.right, successor.key);
+                return r;
+            }
+        }
+    }
+    
+    public Node findMin(Node r) {
+        while (r.left != null) {
+            r = r.left;
+        }
+        return r;
+    }
+
     public void delete(int key) {
         deleteHelper(this.root, key, null, null);
     }
@@ -141,6 +184,8 @@ class BSTMain {
         bst.insert(10, "banana");
         bst.insert(4, "carrot");
         bst.insert(7, "guava");
+        bst.insert(6, "pineapple");
+        bst.insert(2, "grapes");
         bst.inorder(bst.root);
         
         bst.lookup(5);
@@ -148,8 +193,11 @@ class BSTMain {
         bst.lookup(4);
         bst.lookup(8);
     
-        bst.delete(10);
+        bst.betterDelete(10);
         bst.inorder(bst.root);  
         bst.lookup(10);
+    
+        bst.betterDelete(5);
+        bst.inorder(bst.root);
     }
 }            
